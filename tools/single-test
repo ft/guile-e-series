@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Copyright (c) 2017 Frank Terbeck <ft@bewatermyfriend.org>
+# All rights reserved.
+#
+# Terms for redistribution and use can be found in LICENCE.
+
+SOURCE_DIR="$PWD"
+BINARY_DIR="$PWD"
+DISPATCH_ROOT="$SOURCE_DIR/tests"
+DISPATCH_BIN_ROOT="$DISPATCH_ROOT"
+SCHEME_INTERPRETER="${GUILE_BINARY:-guile}"
+
+for i in SOURCE_DIR \
+         BINARY_DIR \
+         DISPATCH_ROOT \
+         DISPATCH_BIN_ROOT \
+         SCHEME_INTERPRETER; do
+    export "$i"
+done
+
+exec dispatch-test "$1"

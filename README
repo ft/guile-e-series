@@ -1,0 +1,9 @@
+  --------------------------------
+    E-Series Tools for GNU Guile
+  --------------------------------
+
+To run the test-suite of the library, the following additional dependencies are
+required:
+
+    https://github.com/ft/scm-test-tap
+    https://github.com/ft/test-dispatch
