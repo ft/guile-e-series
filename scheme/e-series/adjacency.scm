@@ -25,7 +25,9 @@
   #:export (adjacency
             adjacency*
             pick-from-e-series
-            pick-from-e-series*))
+            pick-from-e-series*
+            up-e-series
+            down-e-series))
 
 (define (value->pair v)
   (let* ((e (floor (log10 v)))
@@ -154,3 +156,9 @@ Example:
 The result is an alist, where the key is the E-series identifier and the value
 is the result of ‘adjacency*’."
   (pick-w/-picker adjacency* value))
+
+(define (up-e-series s value)
+  (last (adjacency s value)))
+
+(define (down-e-series s value)
+  (first (adjacency s value)))
