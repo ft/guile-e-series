@@ -20,7 +20,7 @@
   #:use-module (e-series tables)
   #:use-module (e-series adjacency)
   #:export (combine
-            make-error-filter))
+            error-predicate))
 
 (define (candidate-error t v)
   (/ (- v t) t))
@@ -28,12 +28,12 @@
 (define (value-or-first v)
   (if (list? v) (first v) v))
 
-(define (add+ predicate target lst part adj)
+(define (add combination predicate target lst part adj)
   (let loop ((rest (if (list? adj) adj (list adj))))
     (if (null? rest)
         lst
         (let* ((new (+ part (car rest)))
-               (item `((combination . direct)
+               (item `((combination . ,combination)
                        (value . ,new)
                        (parts ,part ,(car rest))
                        (error . ,(candidate-error target new)))))
@@ -54,20 +54,28 @@
   (< (abs (assq-ref a 'error))
      (abs (assq-ref b 'error))))
 
-(define (make-error-filter limit)
+(define (error-predicate limit)
   (lambda (item)
     (<= (abs (assq-ref item 'error)) limit)))
 
-(define* (combine s value #:key (predicate (make-error-filter 1/100)))
+(define (direct predicate s target init)
+  (let ((half (value-or-first (adjacency* s (/ target 2)))))
+    (let loop ((current (down-e-series s target)) (candidates* init))
+      (if (< current half)
+          candidates*
+          (loop (down-e-series s current)
+                (add 'direct predicate target candidates* current
+                     (adjacency* s (- target current))))))))
+
+(define (reciprocal predicate s target init)
+  init)
+
+(define* (combine s value #:key (predicate (error-predicate 1/100)))
   (let* ((nearest (adjacency* s value)))
     (if (number? nearest)
         (add-initial predicate value nearest)
-        (let ((half (value-or-first (adjacency* s (/ value 2)))))
-          (let loop ((current (first nearest))
-                     (candidates (add-initial predicate value
-                                              (second nearest))))
-            (if (< current half)
-                (sort candidates error<)
-                (loop (down-e-series s current)
-                      (add+ predicate value candidates current
-                            (adjacency* s (- value current))))))))))
+        (sort (reciprocal predicate s value
+                          (direct predicate s value
+                                  (add-initial predicate value
+                                               (second nearest))))
+              error<))))
