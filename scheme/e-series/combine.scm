@@ -67,6 +67,27 @@
     (<= (abs (assq-ref item 'error)) limit)))
 
 (define (work tag half start step fill comb+ comb-transform)
+  "Return a worker function that produces combinations
+
+Direct and reciprocal combinations require very similar iterations. The
+function returned by this function implements this iteration. Its arguments
+are parameters that define the results the iteration produces.
+
+- tag: A symbol identifying the type of combination produced
+- half: A function of two arguments that produces the iteration limit
+- start: Another function of two arguments that produces the starting
+  value for the iteration.
+- step: Yet another function of two arguments; it needs to produce the
+  value used in the next iteration step.
+- fill: A function of three arguments, that produces a value, or a list
+  of values, that can be used in combination with the current iteration
+  value to produce the target value.
+- comb+: A function of two values that adds these two values with respect
+  to the type of combination that the iteration implements.
+- comb-transform: A function of one argument that transforms the iteration
+  value to the domain of the target value the combination tries to approximate.
+
+This function is used to implement ‘direct’ and ‘reciprocal’ below."
   (lambda (p s t i)
     (let ((h (half s t)))
       (let loop ((current (start s t)) (candidates i))
@@ -93,6 +114,28 @@
                          rec))
 
 (define* (combine s value #:key (predicate (error-predicate 1/100)))
+  "Produce combinations of value in an E-series to approximate a target value.
+
+This function requires an integer ‘s’ identifying an E-series and a number
+‘value’ that should be approximated by two values from the requested E-series.
+The function takes an optional predicate. The default predicate is to filter
+combinations that approximate the target value with an error of at most 1%.
+
+Example:
+
+    (combine 6 #e50)  ;; Approximate a value of 50 in E6.
+    => (((combination . reciprocal)
+         (value . 50)
+         (parts 100 100)
+         (error . 0))
+        ((combination . direct)
+         (value . 503/10)
+         (parts 47 33/10)
+         (error . 3/500)))
+
+If we were looking for a resistor of 50 Ohms in E6, that could be produced with
+1% error using a parallel circuit of two 100 Ohm resistors or a series circuit
+that is made up of 47 and 3.3 Ohms."
   (let* ((nearest (adjacency* s value)))
     (if (number? nearest)
         (add-initial predicate value nearest)
