@@ -22,17 +22,25 @@
   #:export (combine
             error-predicate))
 
+(define (rec x)
+  (if (list? x)
+      (map rec x)
+      (/ 1 x)))
+
+(define (rec+ a b)
+  (rec (+ (rec a) (rec b))))
+
 (define (candidate-error t v)
   (/ (- v t) t))
 
 (define (value-or-first v)
   (if (list? v) (first v) v))
 
-(define (add combination predicate target lst part adj)
+(define (add combination cmb predicate target lst part adj)
   (let loop ((rest (if (list? adj) adj (list adj))))
     (if (null? rest)
         lst
-        (let* ((new (+ part (car rest)))
+        (let* ((new (cmb part (car rest)))
                (item `((combination . ,combination)
                        (value . ,new)
                        (parts ,part ,(car rest))
@@ -58,24 +66,37 @@
   (lambda (item)
     (<= (abs (assq-ref item 'error)) limit)))
 
-(define (direct predicate s target init)
-  (let ((half (value-or-first (adjacency* s (/ target 2)))))
-    (let loop ((current (down-e-series s target)) (candidates* init))
-      (if (< current half)
-          candidates*
-          (loop (down-e-series s current)
-                (add 'direct predicate target candidates* current
-                     (adjacency* s (- target current))))))))
+(define (work tag half start step fill comb+ comb-transform)
+  (lambda (p s t i)
+    (let ((h (half s t)))
+      (let loop ((current (start s t)) (candidates i))
+        (if (< current h)
+            candidates
+            (loop (step s current)
+                  (add tag comb+ p t candidates (comb-transform current)
+                       (fill s t current))))))))
 
-(define (reciprocal predicate s target init)
-  init)
+(define direct (work 'direct
+                     (lambda (s t) (value-or-first (adjacency* s (/ t 2))))
+                     down-e-series
+                     down-e-series
+                     (lambda (s t c) (adjacency* s (- t c)))
+                     + identity))
+
+(define reciprocal (work 'reciprocal
+                         (lambda (s t)
+                           (rec (value-or-first (adjacency* s (* t 2)))))
+                         (lambda (s t) (rec (up-e-series s t)))
+                         (lambda (s c) (rec (up-e-series s (rec c))))
+                         (lambda (s t c) (adjacency* s (rec (- (rec t) c))))
+                         rec+
+                         rec))
 
 (define* (combine s value #:key (predicate (error-predicate 1/100)))
   (let* ((nearest (adjacency* s value)))
     (if (number? nearest)
         (add-initial predicate value nearest)
-        (sort (reciprocal predicate s value
-                          (direct predicate s value
-                                  (add-initial predicate value
-                                               (second nearest))))
+        (sort ((compose (lambda (lst) (reciprocal predicate s value lst))
+                        (lambda (lst) (direct predicate s value lst)))
+               (add-initial predicate value (second nearest)))
               error<))))
