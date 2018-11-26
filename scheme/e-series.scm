@@ -19,7 +19,7 @@
   #:use-module (e-series adjacency)
   #:use-module (e-series combine)
   #:use-module (e-series tables)
-  #:export (resistor))
+  #:export (resistor inductor))
 
 (define (add-circuit table entry)
   (let ((c (assq-ref entry 'combination)))
@@ -44,6 +44,8 @@
          (map car e-tables)))
    ((s r #:key (predicate (error-predicate 1/100)))
     (map r-ish-circuit (combine s r #:predicate predicate)))))
+
+(define inductor* resistor*)
 
 (define si-prefixes `(( 24  yotta Y)
                       ( 21  zetta Z)
@@ -151,19 +153,24 @@
             circuit)))
 
 (define *r-unit-string* "Ω")
+(define *l-unit-string* "H")
 (define (make-undefined) (if #f #f))
 
-(define resistor
-  (case-lambda*
-   ((r)
-    (simtab-header)
-    (for-each (lambda (result) (simtab-record r result *r-unit-string*))
-              (resistor* r))
-    (simtab-line)
-    (make-undefined))
-   ((s r #:key (predicate (error-predicate 1/100)))
-    (comb-header)
-    (for-each (lambda (result) (combtab-record r result *r-unit-string*))
-              (resistor* s r #:predicate predicate))
-    (comb-line)
-    (make-undefined))))
+(define-syntax-rule (define-part-frontend type backend unit)
+  (define type
+    (case-lambda*
+     ((value)
+      (simtab-header)
+      (for-each (lambda (result) (simtab-record value result unit))
+                (backend value))
+      (simtab-line)
+      (make-undefined))
+     ((s value #:key (predicate (error-predicate 1/100)))
+      (comb-header)
+      (for-each (lambda (result) (combtab-record value result unit))
+                (backend s value #:predicate predicate))
+      (comb-line)
+      (make-undefined)))))
+
+(define-part-frontend resistor resistor* *r-unit-string*)
+(define-part-frontend inductor inductor* *l-unit-string*)
