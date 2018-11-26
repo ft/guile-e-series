@@ -141,7 +141,7 @@
 
 (define (comb-header)
   (comb-line)
-  (format #t "  Desired  |        Actual (Error)  |    Part A  |    Part B  |  Circuit Type  ~%")
+  (format #t "  Desired  |        Actual (Error)  |    Part A  |    Part B  |  Circuit Type~%")
   (comb-line))
 
 (define (combtab-record value record unit)
