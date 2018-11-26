@@ -19,7 +19,7 @@
   #:use-module (e-series adjacency)
   #:use-module (e-series combine)
   #:use-module (e-series tables)
-  #:export (resistor inductor))
+  #:export (capacitor inductor resistor))
 
 (define (add-circuit table entry)
   (let ((c (assq-ref entry 'combination)))
@@ -36,15 +36,18 @@
                  (reciprocal . series))
                e))
 
-(define resistor*
-  (case-lambda*
-   ((r)
-    (map (lambda (s)
-           (cons s (adjacency s r)))
-         (map car e-tables)))
-   ((s r #:key (predicate (error-predicate 1/100)))
-    (map r-ish-circuit (combine s r #:predicate predicate)))))
+(define-syntax-rule (define-part-backend name c-tab)
+  (define name
+    (case-lambda*
+     ((r)
+      (map (lambda (s)
+             (cons s (adjacency s r)))
+           (map car e-tables)))
+     ((s r #:key (predicate (error-predicate 1/100)))
+      (map c-tab (combine s r #:predicate predicate))))))
 
+(define-part-backend capacitor* c-ish-circuit)
+(define-part-backend resistor* r-ish-circuit)
 (define inductor* resistor*)
 
 (define si-prefixes `(( 24  yotta Y)
@@ -152,8 +155,9 @@
             part-b
             circuit)))
 
-(define *r-unit-string* "Ω")
+(define *c-unit-string* "F")
 (define *l-unit-string* "H")
+(define *r-unit-string* "Ω")
 (define (make-undefined) (if #f #f))
 
 (define-syntax-rule (define-part-frontend type backend unit)
@@ -172,5 +176,6 @@
       (comb-line)
       (make-undefined)))))
 
-(define-part-frontend resistor resistor* *r-unit-string*)
+(define-part-frontend capacitor capacitor* *c-unit-string*)
 (define-part-frontend inductor inductor* *l-unit-string*)
+(define-part-frontend resistor resistor* *r-unit-string*)
