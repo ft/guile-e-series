@@ -2,6 +2,39 @@
     E-Series Tools for GNU Guile
   --------------------------------
 
+The E-Series are series of preferred numbers, commonly used to specify electro-
+nic parts; mostly resistors, inductors  and capacitors. This library implements
+two kinds of lookups: a) Given a value,  look up that value in all E-series and
+return the values  surrounding the desired value; and b)  Given an integer that
+identifies an E-Series  and a desired value, return combinations  of two parts,
+that approximate the desired value as closely as possible.
+
+For ease of use, the library impements the (e-series) module, that implements a
+set of frontends (‘resistor’, ‘inductor’ and ‘capacitor’), that can all be used
+in precisely the two ways described above. Examples:
+
+(capacitor #e910e-6)
+ ---------+-------------------------+------------+------------------------
+  Series  |          Below (Error)  |     Exact  |         Above (Error)
+ ---------+-------------------------+------------+------------------------
+    E3    |  470.00µF  (-4.835E-1)  |            |    1.00mF  (+9.890E-2)
+    E6    |  680.00µF  (-2.527E-1)  |            |    1.00mF  (+9.890E-2)
+    E12   |  820.00µF  (-9.890E-2)  |            |    1.00mF  (+9.890E-2)
+    E24   |  820.00µF  (-9.890E-2)  |  910.00µF  |    1.00mF  (+9.890E-2)
+    E48   |  909.00µF  (-1.099E-3)  |            |  953.00µF  (+4.725E-2)
+    E96   |  909.00µF  (-1.099E-3)  |            |  931.00µF  (+2.308E-2)
+    E192  |  909.00µF  (-1.099E-3)  |            |  920.00µF  (+1.099E-2)
+ ---------+-------------------------+------------+------------------------
+
+(capacitor 12 #e910e-6)
+ ----------+------------------------+------------+------------+----------------
+  Desired  |        Actual (Error)  |    Part A  |    Part B  |  Circuit Type
+ ----------+------------------------+------------+------------+----------------
+ 910.00µF  |  909.09µF (-9.990E-4)  |    1.00mF  |   10.00mF  |  series
+ 910.00µF  |  917.65µF (+8.403E-3)  |    1.20mF  |    3.90mF  |  series
+ 910.00µF  |  902.00µF (-8.791E-3)  |  820.00µF  |   82.00µF  |  parallel
+ ----------+------------------------+------------+------------+----------------
+
 To run the test-suite of the library, the following additional dependencies are
 required:
 
