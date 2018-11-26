@@ -126,32 +126,44 @@
             (pp-value above) unit
             above-e)))
 
+(define (comb-line)
+  (format #t " ----------+------------------------+------------+------------+----------------~%"))
+
+(define (comb-header)
+  (comb-line)
+  (format #t "  Desired  |        Actual (Error)  |    Part A  |    Part B  |  Circuit Type  ~%")
+  (comb-line))
+
+(define (combtab-record value record unit)
+  (let* ((parts (assq-ref record 'parts))
+         (part-a (pp-value (first parts)))
+         (part-b (if (> (length parts) 1)
+                     (string-append (pp-value (second parts)) unit)
+                     "     -/-"))
+         (circuit* (assq-ref record 'circuit))
+         (circuit (or circuit* 'single-part)))
+    (format #t " ~a~a  |  ~a~a (~a)  |  ~a~a  |  ~a  |  ~a~%"
+            (pp-value value) unit
+            (pp-value (assq-ref record 'value)) unit
+            (pp-error (assq-ref record 'error)) unit
+            part-a
+            part-b
+            circuit)))
+
+(define *r-unit-string* "Ω")
+(define (make-undefined) (if #f #f))
+
 (define resistor
   (case-lambda*
    ((r)
     (simtab-header)
-    (for-each (lambda (result) (simtab-record r result "Ω")) (resistor* r))
+    (for-each (lambda (result) (simtab-record r result *r-unit-string*))
+              (resistor* r))
     (simtab-line)
-    (if #f #f))
+    (make-undefined))
    ((s r #:key (predicate (error-predicate 1/100)))
-    (format #t " ----------+------------------------+------------+------------+----------------~%")
-    (format #t "  Desired  |        Actual (Error)  |    Part A  |    Part B  |  Circuit Type  ~%")
-    (format #t " ----------+------------------------+------------+------------+----------------~%")
-    (for-each (lambda (result)
-                (let* ((parts (assq-ref result 'parts))
-                       (part-a (pp-value (first parts)))
-                       (part-b (if (> (length parts) 1)
-                                   (string-append (pp-value (second parts)) "Ω")
-                                   "     -/-"))
-                       (circuit* (assq-ref result 'circuit))
-                       (circuit (or circuit* 'single-part)))
-                  (format #t " ~aΩ  |  ~aΩ (~a)  |  ~aΩ  |  ~a  |  ~a~%"
-                          (pp-value r)
-                          (pp-value (assq-ref result 'value))
-                          (pp-error (assq-ref result 'error))
-                          part-a
-                          part-b
-                          circuit)))
+    (comb-header)
+    (for-each (lambda (result) (combtab-record r result *r-unit-string*))
               (resistor* s r #:predicate predicate))
-    (format #t " ----------+------------------------+------------+------------+----------------~%")
-    (if #f #f))))
+    (comb-line)
+    (make-undefined))))
