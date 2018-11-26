@@ -98,33 +98,40 @@
       "  exact  "
       (format #f "~,3@e" v)))
 
+(define (simtab-line)
+  (format #t " ---------+-------------------------+------------+------------------------~%"))
+
+(define (simtab-header)
+  (simtab-line)
+  (format #t "  Series  |          Below (Error)  |     Exact  |         Above (Error)~%")
+  (simtab-line))
+
+(define (simtab-record value record unit)
+  (let* ((below (second record))
+         (below-e (/ (- below value) value))
+         (exact (if (> (length record) 3)
+                    (string-append (pp-value (third record)) unit)
+                    "        "))
+         (above (last record))
+         (above-e (/ (- above value) value)))
+    (format #t "    E~a~a  |  ~a~a  (~,3@e)  |  ~a  |  ~a~a  (~,3@e)~%"
+            (first record)
+            (case (first record)
+              ((3 6) "  ")
+              ((12 24 48 96) " ")
+              (else ""))
+            (pp-value below) unit
+            below-e
+            exact
+            (pp-value above) unit
+            above-e)))
+
 (define resistor
   (case-lambda*
    ((r)
-    (format #t " ---------+-------------------------+------------+------------------------~%")
-    (format #t "  Series  |          Below (Error)  |     Exact  |         Above (Error)  ~%")
-    (format #t " ---------+-------------------------+------------+------------------------~%")
-    (for-each (lambda (result)
-                (let* ((below (second result))
-                       (below-e (/ (- below r) r))
-                       (exact (if (> (length result) 3)
-                                  (string-append (pp-value (third result)) "Ω")
-                                  "        "))
-                       (above (last result))
-                       (above-e (/ (- above r) r)))
-                  (format #t "    E~a~a  |  ~aΩ  (~,3@e)  |  ~a  |  ~aΩ  (~,3@e)~%"
-                          (first result)
-                          (case (first result)
-                            ((3 6) "  ")
-                            ((12 24 48 96) " ")
-                            (else ""))
-                          (pp-value below)
-                          below-e
-                          exact
-                          (pp-value above)
-                          above-e)))
-              (resistor* r))
-    (format #t " ---------+-------------------------+------------+------------------------~%")
+    (simtab-header)
+    (for-each (lambda (result) (simtab-record r result "Ω")) (resistor* r))
+    (simtab-line)
     (if #f #f))
    ((s r #:key (predicate (error-predicate 1/100)))
     (format #t " ----------+------------------------+------------+------------+----------------~%")
