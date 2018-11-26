@@ -19,7 +19,12 @@
   #:use-module (e-series adjacency)
   #:use-module (e-series combine)
   #:use-module (e-series tables)
-  #:export (capacitor inductor resistor))
+  #:export (capacitor
+            inductor
+            resistor
+            capacitor*
+            inductor*
+            resistor*))
 
 (define (add-circuit table entry)
   (let ((c (assq-ref entry 'combination)))
