@@ -155,8 +155,8 @@
     (format #t " ~a~a  |  ~a~a (~a)  |  ~a~a  |  ~a  |  ~a~%"
             (pp-value value) unit
             (pp-value (assq-ref record 'value)) unit
-            (pp-error (assq-ref record 'error)) unit
-            part-a
+            (pp-error (assq-ref record 'error))
+            part-a unit
             part-b
             circuit)))
 
