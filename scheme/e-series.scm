@@ -85,7 +85,7 @@
 
 (define (value->engexp v)
   (let* ((m&e (value->pair v))
-         (exponent (inexact->exact (log10 (inexact->exact (cdr m&e)))))
+         (exponent (inexact->exact (round (log10 (inexact->exact (cdr m&e))))))
          (em3 (modulo exponent 3))
          (si (- exponent em3)))
     (cons (* (car m&e) (expt 10 em3))
