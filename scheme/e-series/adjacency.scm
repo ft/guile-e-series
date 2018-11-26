@@ -27,7 +27,8 @@
             pick-from-e-series
             pick-from-e-series*
             up-e-series
-            down-e-series))
+            down-e-series
+            value->pair))
 
 (define (value->pair v)
   (let* ((e (floor (log10 v)))
