@@ -13,12 +13,6 @@
 ;; You should  have received a  copy of the  GNU Lesser General  Public License
 ;; along with  this library;  if not,  write to  the Free  Software Foundation,
 ;; Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-;;
-;; Commentary:
-;;
-;; This module implements streams that  produce pseudo random gold chip sequen-
-;; ces as used in  C/A of the GPS satellite system. The  module uses the linear
-;; feedback shift register module (communication lfsr)
 
 (define-module (e-series tables)
   #:use-module (srfi srfi-42)
