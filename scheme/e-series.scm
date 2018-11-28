@@ -130,7 +130,7 @@
          (below-e (/ (- below value) value))
          (exact (if (> (length record) 3)
                     (string-append (pp-value (third record)) unit)
-                    "        "))
+                    "         "))
          (above (last record))
          (above-e (/ (- above value) value)))
     (format #t "    E~a~a  |  ~a~a  (~,3@e)  |  ~a  |  ~a~a  (~,3@e)~%"
@@ -146,11 +146,11 @@
             above-e)))
 
 (define (comb-line)
-  (format #t " -----------+-------------------------+-------------+-------------+----------------~%"))
+  (format #t " ------------+-------------------------+-------------+-------------+-----------~%"))
 
 (define (comb-header)
   (comb-line)
-  (format #t "   Desired  |         Actual (Error)  |     Part A  |     Part B  |  Circuit Type~%")
+  (format #t "    Desired  |         Actual (Error)  |     Part A  |     Part B  |  Circuit~%")
   (comb-line))
 
 (define (combtab-record value record unit)
@@ -161,7 +161,7 @@
                      "     -/-"))
          (circuit* (assq-ref record 'circuit))
          (circuit (or circuit* 'single-part)))
-    (format #t " ~a~a  |  ~a~a (~a)  |  ~a~a  |  ~a  |  ~a~%"
+    (format #t "  ~a~a  |  ~a~a (~a)  |  ~a~a  |  ~a  |  ~a~%"
             (pp-value value) unit
             (pp-value (assq-ref record 'value)) unit
             (pp-error (assq-ref record 'error))
