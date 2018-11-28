@@ -15,6 +15,7 @@
 ;; Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 (define-module (e-series)
+  #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:use-module (e-series adjacency)
   #:use-module (e-series combine)
@@ -83,25 +84,32 @@
         (second prefix)
         (symbol-append 'e (string->symbol (number->string e))))))
 
+(define (base10->exponent n)
+  (inexact->exact (round (log10 (inexact->exact n)))))
+
 (define (value->engexp v)
   (let* ((m&e (value->pair v))
-         (exponent (inexact->exact (round (log10 (inexact->exact (cdr m&e))))))
+         (exponent (base10->exponent (cdr m&e)))
          (em3 (modulo exponent 3))
          (si (- exponent em3)))
-    (cons (* (car m&e) (expt 10 em3))
-          si)))
+    (list (* (car m&e) (expt 10 em3))
+          si
+          em3)))
 
-(define (value->engpair v)
-  (let ((p (value->engexp v)))
-    (cons (car p)
-          (exp->prefix (cdr p)))))
+(define (value->engtriple v)
+  (match (value->engexp v)
+    ((n si em3) (list n (exp->prefix si) em3))))
+
+(define (pp-without-prefix n em3)
+  (format #f " ~v,vf" em3 (- 5 em3) (exact->inexact n)))
+
+(define (pp-with-prefix n em3 prefix)
+  (format #f "~v,vf~a" em3 (- 5 em3) (exact->inexact n) prefix))
 
 (define (pp-value v)
-  (let ((p (value->engpair v)))
-    (format #f "~a~6,2f~a"
-            (if (cdr p) "" " ")
-            (exact->inexact (car p))
-            (if (cdr p) (cdr p) ""))))
+  (match (value->engtriple v)
+    ((n #f em3) (pp-without-prefix n em3))
+    ((n prefix em3) (pp-with-prefix n em3 prefix))))
 
 (define (pp-error v)
   (if (zero? v)
@@ -109,11 +117,11 @@
       (format #f "~,3@e" v)))
 
 (define (simtab-line)
-  (format #t " ---------+-------------------------+------------+------------------------~%"))
+  (format #t " ---------+--------------------------+-------------+--------------------------~%"))
 
 (define (simtab-header)
   (simtab-line)
-  (format #t "  Series  |          Below (Error)  |     Exact  |         Above (Error)~%")
+  (format #t "  Series  |           Below (Error)  |      Exact  |           Above (Error)~%")
   (simtab-line))
 
 (define (simtab-record value record unit)
@@ -137,11 +145,11 @@
             above-e)))
 
 (define (comb-line)
-  (format #t " ----------+------------------------+------------+------------+----------------~%"))
+  (format #t " -----------+-------------------------+-------------+-------------+----------------~%"))
 
 (define (comb-header)
   (comb-line)
-  (format #t "  Desired  |        Actual (Error)  |    Part A  |    Part B  |  Circuit Type~%")
+  (format #t "   Desired  |         Actual (Error)  |     Part A  |     Part B  |  Circuit Type~%")
   (comb-line))
 
 (define (combtab-record value record unit)
