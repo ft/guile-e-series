@@ -16,6 +16,7 @@
 
 (define-module (e-series)
   #:use-module (ice-9 match)
+  #:use-module (ice-9 format)
   #:use-module (srfi srfi-1)
   #:use-module (e-series adjacency)
   #:use-module (e-series combine)
