@@ -18,8 +18,8 @@
   #:use-module (ice-9 match)
   #:use-module (ice-9 format)
   #:use-module (srfi srfi-1)
-  #:use-module (e-series adjacency)
-  #:use-module (e-series combine)
+  #:use-module ((e-series adjacency) #:prefix $)
+  #:use-module ((e-series combine) #:prefix $)
   #:use-module (e-series tables)
   #:export (capacitor
             inductor
@@ -48,10 +48,10 @@
     (case-lambda*
      ((r)
       (map (lambda (s)
-             (cons s (adjacency s r)))
+             (cons s ($adjacency s r)))
            (map car e-tables)))
-     ((s r #:key (predicate (error-predicate 1/100)))
-      (map c-tab (combine s r #:predicate predicate))))))
+     ((s r #:key (predicate ($error-predicate 1/100)))
+      (map c-tab ($combine s r #:predicate predicate))))))
 
 (define-part-backend capacitor* c-ish-circuit)
 (define-part-backend resistor* r-ish-circuit)
@@ -89,7 +89,7 @@
   (inexact->exact (round (log10 (inexact->exact n)))))
 
 (define (value->engexp v)
-  (let* ((m&e (value->pair v))
+  (let* ((m&e ($value->pair v))
          (exponent (base10->exponent (cdr m&e)))
          (em3 (modulo exponent 3))
          (si (- exponent em3)))
@@ -183,7 +183,7 @@
                 (backend value))
       (simtab-line)
       (make-undefined))
-     ((s value #:key (predicate (error-predicate 1/100)))
+     ((s value #:key (predicate ($error-predicate 1/100)))
       (comb-header)
       (for-each (lambda (result) (combtab-record value result unit))
                 (backend s value #:predicate predicate))
