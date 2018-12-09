@@ -22,22 +22,13 @@
 (define-module (e-series adjacency)
   #:use-module (srfi srfi-1)
   #:use-module (e-series tables)
+  #:use-module (e-series utilities)
   #:export (adjacency
             adjacency*
             pick-from-e-series
             pick-from-e-series*
             up-e-series
-            down-e-series
-            value->pair))
-
-(define (value->pair v)
-  (let* ((e (floor (log10 v)))
-         (e* (inexact->exact (expt 10 (abs e))))
-         (e** (if (positive? e) e* (/ 1 e*))))
-    (cons (inexact->exact (/ v e**)) e**)))
-
-(define (take-at-most lst n)
-  (take lst (min (length lst) n)))
+            down-e-series))
 
 (define (exact-adjacency lst value)
   (let ((rest (member value lst)))

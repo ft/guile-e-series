@@ -17,24 +17,11 @@
 (define-module (e-series combine)
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
-  #:use-module (e-series tables)
   #:use-module (e-series adjacency)
+  #:use-module (e-series tables)
+  #:use-module (e-series utilities)
   #:export (combine
             error-predicate))
-
-(define (rec x)
-  (if (list? x)
-      (map rec x)
-      (/ 1 x)))
-
-(define (rec+ a b)
-  (rec (+ (rec a) (rec b))))
-
-(define (candidate-error t v)
-  (/ (- v t) t))
-
-(define (value-or-first v)
-  (if (list? v) (first v) v))
 
 (define (add combination cmb predicate target lst part adj)
   (let loop ((rest (if (list? adj) adj (list adj))))

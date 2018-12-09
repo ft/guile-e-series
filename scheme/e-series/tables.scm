@@ -16,10 +16,8 @@
 
 (define-module (e-series tables)
   #:use-module (srfi srfi-42)
+  #:use-module (e-series utilities)
   #:export (e3 e6 e12 e24 e48 e192 e-tables e-series is-e-series?))
-
-(define (by-100 v)
-  (map (lambda (x) (/ x 100)) v))
 
 (define e3   (by-100 (list 100 220 470)))
 (define e6   (by-100 (list 100 150 220 330 470 680)))

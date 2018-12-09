@@ -33,13 +33,11 @@
 (define-module (e-series exact)
   #:use-module (srfi srfi-42)
   #:use-module (e-series tables)
+  #:use-module (e-series utilities)
   #:export (exact-e-series
             exact-series
             rounded-e-series
             rounded-series))
-
-(define (by-100 v)
-  (map (lambda (x) (/ x 100)) v))
 
 (define (series-value** s n)
   (inexact->exact (round (* 100 (series-value s n)))))
