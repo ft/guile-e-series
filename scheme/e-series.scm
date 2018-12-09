@@ -22,7 +22,9 @@
   #:use-module (e-series predicates)
   #:use-module (e-series pretty-print)
   #:use-module (e-series tables)
-  #:re-export (match-all
+  #:re-export (any-of
+               all-of
+               match-all
                bigger
                smaller
                exact

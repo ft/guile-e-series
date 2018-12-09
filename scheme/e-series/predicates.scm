@@ -15,7 +15,9 @@
 ;; Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 (define-module (e-series predicates)
-  #:export (match-all
+  #:export (any-of
+            all-of
+            match-all
             bigger
             smaller
             exact
@@ -48,3 +50,17 @@
 
 (define (max-error limit)
   (make-item-predicate <= 'error abs limit))
+
+(define (any-of . lst)
+  (lambda (item)
+    (let loop ((rest lst))
+      (cond ((null? rest) #f)
+            (((car rest) item) #t)
+            (else (loop (cdr rest)))))))
+
+(define (all-of . lst)
+  (lambda (item)
+    (let loop ((rest lst))
+      (cond ((null? rest) #t)
+            ((not ((car rest) item)) #f)
+            (else (loop (cdr rest)))))))
