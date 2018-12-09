@@ -18,10 +18,10 @@
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
   #:use-module (e-series adjacency)
+  #:use-module (e-series predicates)
   #:use-module (e-series tables)
   #:use-module (e-series utilities)
-  #:export (combine
-            error-predicate))
+  #:export (combine))
 
 (define (add combination cmb predicate target lst part adj)
   (let loop ((rest (if (list? adj) adj (list adj))))
@@ -48,10 +48,6 @@
 (define (error< a b)
   (< (abs (assq-ref a 'error))
      (abs (assq-ref b 'error))))
-
-(define (error-predicate limit)
-  (lambda (item)
-    (<= (abs (assq-ref item 'error)) limit)))
 
 (define (work tag half start step fill comb+ comb-transform)
   "Return a worker function that produces combinations
@@ -100,7 +96,7 @@ This function is used to implement ‘direct’ and ‘reciprocal’ below."
                          rec+
                          rec))
 
-(define* (combine s value #:key (predicate (error-predicate 1/100)))
+(define* (combine s value #:key (predicate (max-error 1/100)))
   "Produce combinations of value in an E-series to approximate a target value.
 
 This function requires an integer ‘s’ identifying an E-series and a number

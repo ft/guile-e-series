@@ -19,8 +19,16 @@
   #:use-module (srfi srfi-1)
   #:use-module ((e-series adjacency) #:prefix $)
   #:use-module ((e-series combine) #:prefix $)
+  #:use-module (e-series predicates)
   #:use-module (e-series pretty-print)
   #:use-module (e-series tables)
+  #:re-export (match-all
+               bigger
+               smaller
+               exact
+               circuit
+               combination
+               max-error)
   #:export (capacitor
             inductor
             resistor
@@ -50,7 +58,7 @@
       (map (lambda (s)
              (cons s ($adjacency s r)))
            (map car e-tables)))
-     ((s r #:key (predicate ($error-predicate 1/100)))
+     ((s r #:key (predicate (max-error 1/100)))
       (map c-tab ($combine s r #:predicate predicate))))))
 
 (define-part-backend capacitor* c-ish-circuit)
@@ -123,7 +131,7 @@
                 (backend value))
       (simtab-line)
       (make-undefined))
-     ((s value #:key (predicate ($error-predicate 1/100)))
+     ((s value #:key (predicate (max-error 1/100)))
       (comb-header)
       (for-each (lambda (result) (combtab-record value result unit))
                 (backend s value #:predicate predicate))
