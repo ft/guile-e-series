@@ -94,7 +94,7 @@
             above-e)))
 
 (define (comb-line)
-  (format #t " ------------+-------------------------+-------------+-------------+-----------~%"))
+  (format #t " ------------+-------------------------+-------------+-------------+--------------~%"))
 
 (define (comb-header)
   (comb-line)
@@ -106,7 +106,7 @@
          (part-a (pp-value (first parts)))
          (part-b (if (> (length parts) 1)
                      (string-append (pp-value (second parts)) unit)
-                     "     -/-"))
+                     "     -/- "))
          (circuit* (assq-ref record 'circuit))
          (circuit (or circuit* 'single-part)))
     (format #t "  ~a~a  |  ~a~a (~a)  |  ~a~a  |  ~a  |  ~a~%"
