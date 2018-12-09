@@ -59,7 +59,9 @@
              (cons s ($adjacency s r)))
            (map car e-tables)))
      ((s r #:key (predicate (max-error 1/100)))
-      (map c-tab ($combine s r #:predicate predicate))))))
+      ($combine s r
+                #:extend c-tab
+                #:predicate predicate)))))
 
 (define-part-backend capacitor* c-ish-circuit)
 (define-part-backend resistor* r-ish-circuit)

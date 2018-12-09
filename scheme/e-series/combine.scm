@@ -23,24 +23,24 @@
   #:use-module (e-series utilities)
   #:export (combine))
 
-(define (add combination cmb predicate target lst part adj)
+(define (add combination cmb extend predicate target lst part adj)
   (let loop ((rest (if (list? adj) adj (list adj))))
     (if (null? rest)
         lst
         (let* ((new (cmb part (car rest)))
-               (item `((combination . ,combination)
-                       (value . ,new)
-                       (parts ,part ,(car rest))
-                       (error . ,(candidate-error target new)))))
+               (item (extend `((combination . ,combination)
+                               (value . ,new)
+                               (parts ,part ,(car rest))
+                               (error . ,(candidate-error target new))))))
           (if (predicate item)
               (cons item (loop (cdr rest)))
               (loop (cdr rest)))))))
 
-(define (add-initial predicate target value)
-  (let ((item `(((combination . single)
-                 (value . ,value)
-                 (parts ,value)
-                 (error . ,(candidate-error target value))))))
+(define (add-initial extend predicate target value)
+  (let ((item (map extend `(((combination . single)
+                             (value . ,value)
+                             (parts ,value)
+                             (error . ,(candidate-error target value)))))))
     (if (predicate (first item))
         item
         '())))
@@ -71,13 +71,13 @@ are parameters that define the results the iteration produces.
   value to the domain of the target value the combination tries to approximate.
 
 This function is used to implement ‘direct’ and ‘reciprocal’ below."
-  (lambda (p s t i)
+  (lambda (x p s t i)
     (let ((h (half s t)))
       (let loop ((current (start s t)) (candidates i))
         (if (< current h)
             candidates
             (loop (step s current)
-                  (add tag comb+ p t candidates (comb-transform current)
+                  (add tag comb+ x p t candidates (comb-transform current)
                        (fill s t current))))))))
 
 (define direct (work 'direct
@@ -96,7 +96,9 @@ This function is used to implement ‘direct’ and ‘reciprocal’ below."
                          rec+
                          rec))
 
-(define* (combine s value #:key (predicate (max-error 1/100)))
+(define* (combine s value #:key
+                  (predicate (max-error 1/100))
+                  (extend identity))
   "Produce combinations of value in an E-series to approximate a target value.
 
 This function requires an integer ‘s’ identifying an E-series and a number
@@ -121,8 +123,8 @@ If we were looking for a resistor of 50 Ohms in E6, that could be produced with
 that is made up of 47 and 3.3 Ohms."
   (let* ((nearest (adjacency* s value)))
     (if (number? nearest)
-        (add-initial predicate value nearest)
-        (sort ((compose (lambda (lst) (reciprocal predicate s value lst))
-                        (lambda (lst) (direct predicate s value lst)))
-               (add-initial predicate value (second nearest)))
+        (add-initial extend predicate value nearest)
+        (sort ((compose (lambda (lst) (reciprocal extend predicate s value lst))
+                        (lambda (lst) (direct extend predicate s value lst)))
+               (add-initial extend predicate value (second nearest)))
               error<))))
