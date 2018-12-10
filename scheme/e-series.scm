@@ -25,8 +25,8 @@
   #:re-export (any-of
                all-of
                match-all
-               bigger
-               smaller
+               above
+               below
                exact
                circuit
                combination

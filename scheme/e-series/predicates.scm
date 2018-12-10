@@ -18,8 +18,8 @@
   #:export (any-of
             all-of
             match-all
-            bigger
-            smaller
+            above
+            below
             exact
             circuit
             combination
@@ -33,10 +33,10 @@
 (define (match-all)
   (lambda (_) #t))
 
-(define (bigger)
+(define (above)
   (make-item-predicate positive? 'error identity))
 
-(define (smaller)
+(define (below)
   (make-item-predicate negative? 'error identity))
 
 (define (exact)
