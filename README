@@ -35,8 +35,5 @@ in precisely the two ways described above. Examples:
   910.000µF  |  902.000µF (-8.791E-3)  |  820.000µF  |  82.0000µF  |  parallel
  ------------+-------------------------+-------------+-------------+-----------
 
-To run the test-suite of the library, the following additional dependencies are
-required:
-
-    https://github.com/ft/scm-test-tap
-    https://github.com/ft/test-dispatch
+To run  the test-suite of the  library, the following additional  dependency is
+required:   https://gitlab.com/ft/guile-tap
