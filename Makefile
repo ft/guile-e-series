@@ -1,5 +1,5 @@
+PROJECT = guile-tap
 TOPDIR = .
-
 LOAD_PATH = $(TOPDIR)/scheme
 TEST_PATH = $(TOPDIR)/tests
 
@@ -19,6 +19,7 @@ PROVE = tap-harness -e '$(TESTGUILE)'
 INSTALL = $(GUILE_BINARY) --no-auto-compile ./tools/install
 DESTDIR =
 PREFIX = /usr/local
+DOCDIR = $(PREFIX)/share/doc/$(PROJECT)
 
 MODULES  = scheme/e-series.scm
 MODULES += scheme/e-series/adjacency.scm
@@ -46,7 +47,7 @@ test-verbose:
 	$(PROVE) --verbose $(TESTS)
 
 install: all
-	$(INSTALL) DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)"
+	$(INSTALL) DESTDIR="$(DESTDIR)" DOCDIR="$(DOCDIR)" PREFIX="$(PREFIX)"
 
 clean:
 	find . -name "*.go" -exec rm -f '{}' +
