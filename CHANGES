@@ -1,0 +1,30 @@
+----------------------------------------
+ User-visible changes in guile-e-series
+----------------------------------------
+
+* scratch → v0.1.0 (released 2021-07-03):
+
+** Diffstat
+
+    .gitignore                       |  13 +
+    LICENCE                          | 165 ++++++++
+    LICENCE.GPL                      | 674 +++++++++++++++++++++++++++++++
+    Makefile                         |  55 +++
+    README                           |  39 ++
+    scheme/e-series.scm              | 147 +++++++
+    scheme/e-series/adjacency.scm    | 156 +++++++
+    scheme/e-series/combine.scm      | 130 ++++++
+    scheme/e-series/exact.scm        |  71 ++++
+    scheme/e-series/predicates.scm   |  66 +++
+    scheme/e-series/pretty-print.scm |  39 ++
+    scheme/e-series/tables.scm       |  69 ++++
+    scheme/e-series/utilities.scm    |  97 +++++
+    scheme/test/setup.scm            |  15 +
+    tests/adjacency-scm.t            |  65 +++
+    tests/scheme.env                 |   7 +
+    tests/tables-scm.t               |  68 ++++
+    tools/dev-env                    |  11 +
+    tools/guile-in-here              |   5 +
+    tools/install                    | 176 ++++++++
+    tools/run-single-test            |  12 +
+    21 files changed, 2080 insertions(+)
