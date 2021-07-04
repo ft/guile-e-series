@@ -2,6 +2,18 @@
  User-visible changes in guile-e-series
 ----------------------------------------
 
+* v0.1.0 → v0.1.1 (released 2021-07-04):
+
+** Bugfixes
+
+  - Fix project name in make file
+
+** Diffstat
+
+    Makefile | 2 +-
+    1 file changed, 1 insertion(+), 1 deletion(-)
+
+
 * scratch → v0.1.0 (released 2021-07-03):
 
 ** Diffstat
