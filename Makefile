@@ -1,4 +1,4 @@
-PROJECT = guile-tap
+PROJECT = guile-e-series
 TOPDIR = .
 LOAD_PATH = $(TOPDIR)/scheme
 TEST_PATH = $(TOPDIR)/tests
