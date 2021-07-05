@@ -2,6 +2,18 @@
  User-visible changes in guile-e-series
 ----------------------------------------
 
+* v0.1.1 → v0.1.2 (released 2021-07-05):
+
+** Bugfixes
+
+  - Install copy of GPL to complete LGPL document.
+
+** Diffstat
+
+    tools/install | 3 ++-
+    1 file changed, 2 insertions(+), 1 deletion(-)
+
+
 * v0.1.0 → v0.1.1 (released 2021-07-04):
 
 ** Bugfixes

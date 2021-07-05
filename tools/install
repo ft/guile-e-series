@@ -18,7 +18,8 @@
     (module        "scheme" "e-series.scm")
     (documentation "README")
     (documentation "CHANGES")
-    (documentation "LICENCE")))
+    (documentation "LICENCE")
+    (documentation "LICENCE.GPL")))
 
 (use-modules (ice-9 match)
              (ice-9 optargs)
