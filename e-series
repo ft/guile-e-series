@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec ./tools/guile-in-here -l ./tools/repl.scm "$@"
