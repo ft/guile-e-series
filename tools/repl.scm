@@ -21,7 +21,7 @@ Examples:
                                 (circuit 'parallel)))
 
   Note that (max-error 1/100) is actually the default predicate.
-  So if you change the predicate so something that does not in-
+  So, if you change the predicate to something that does not in-
   volve max-error, you get all combinations that satisfy the new
   predicate, no matter how much the value is off.
 
