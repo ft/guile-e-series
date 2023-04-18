@@ -1,4 +1,5 @@
-(use-modules (e-series))
+(use-modules (system repl command)
+             (e-series))
 
 (define (e-series-repl-help)
   (display "GNU Guile E-Series REPL
@@ -25,8 +26,13 @@ Examples:
   volve max-error, you get all combinations that satisfy the new
   predicate, no matter how much the value is off.
 
-  You can redisplay this text by typing '(e-series-repl-help)'.")
+  You can redisplay this text by typing \",eseries\".")
   (newline)
   (newline))
 
 (e-series-repl-help)
+
+(define-meta-command ((eseries eseries) repl)
+  "eseries help
+Show help for e-series module."
+  (e-series-repl-help))
